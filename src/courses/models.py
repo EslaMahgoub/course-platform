@@ -25,15 +25,19 @@ class AccessRequirement(models.TextChoices):
     ANYONE = "any", "Anyone"
     EMAIL_REQUIRED = "email", "Email required"
     
+def handle_upload(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    # return "user_{0}/{1}".format(instance.user.id, filename)
+    return f"{filename}"
 
 class Course(models.Model):
     title = models.CharField(max_length=120)
     description = models.TextField(blank=True, null=True)
-    # image = models.ImageField()
+    image = models.ImageField(upload_to=handle_upload, blank=True, null=True)
     access = models.CharField(
-        max_length=10, 
+        max_length=5, 
         choices=AccessRequirement.choices, 
-        default=AccessRequirement.ANYONE)
+        default=AccessRequirement.EMAIL_REQUIRED)
     status = models.CharField(
         max_length=10, 
         choices=PublishStatus.choices, 
