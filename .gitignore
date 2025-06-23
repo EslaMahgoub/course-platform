@@ -1,5 +1,9 @@
 # Python-generated files
 local-cdn
+
+#Environment
+.env
+
 __pycache__/
 *.py[oc]
 build/
