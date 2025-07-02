@@ -1,3 +1,4 @@
+import helpers
 from django.http import Http404, JsonResponse
 from django.shortcuts import render
 
@@ -8,7 +9,6 @@ from . import services
 def course_list_view(request):
     queryset = services.get_publish_courses()
     context = {"object_list": queryset}
-    # return JsonResponse({"data":[x.path for x in queryset]})
     return render(request, "courses/list.html", context)
 
 def course_detail_view(request, course_id=None, *args, **kwargs):
@@ -19,7 +19,6 @@ def course_detail_view(request, course_id=None, *args, **kwargs):
     context = {"object": course_obj,
             "lessons_queryset": lessons_queryset
             }
-    # return JsonResponse({"data":course_obj.id, "lesson_ids": [l.id for l in lessons_queryset]})
     return render(request, "courses/detail.html", context)
 
 def lesson_detail_view(request, course_id=None, lesson_id=None, *args, **kwargs):
@@ -31,7 +30,18 @@ def lesson_detail_view(request, course_id=None, lesson_id=None, *args, **kwargs)
     context = {
         "object": lesson_obj
     }
-    if not lesson_obj.is_coming_soon:
+    if not lesson_obj.is_coming_soon and lesson_obj.has_video:
+        """
+        Lesson is published, go forward
+        Video is available
+        """
         template_name = "courses/lesson.html"
-    # return JsonResponse({"data":lesson_obj.id})
+        video_embed_html = helpers.get_cloudinary_video_object(
+            lesson_obj,
+            field_name="video",
+            as_html=True,
+            width=1250
+            )
+        context['video_embed'] = video_embed_html
+    # return JsonResponse(context)
     return render(request, template_name, context)
