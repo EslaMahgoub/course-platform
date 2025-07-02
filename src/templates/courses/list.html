@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 class="text-3xl">Courses</h1>
+<hr/>
+{% include "courses/snippets/list-display.html" with queryset=object_list %}
+
+
+{% endblock content %}

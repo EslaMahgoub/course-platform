@@ -19,6 +19,17 @@ def get_course_detail(course_id=None):
         pass
     return obj
 
+def get_course_lessons(course_obj=None):
+    lessons = Lesson.objects.none()
+    if not isinstance(course_obj, Course):
+        return lessons
+    lessons = course_obj.lesson_set.filter(
+        course__status=PublishStatus.PUBLISHED,
+        status__in=[PublishStatus.PUBLISHED,
+                        PublishStatus.COMING_SOON],
+        )
+    return lessons
+
 def get_lesson_detail(course_id=None, lesson_id=None):
     if lesson_id is None or course_id is None:
         return None
@@ -27,7 +38,8 @@ def get_lesson_detail(course_id=None, lesson_id=None):
         obj = Lesson.objects.get(
             course__public_id=course_id,
             course__status=PublishStatus.PUBLISHED,
-            status=PublishStatus.PUBLISHED,
+            status__in=[PublishStatus.PUBLISHED,
+                        PublishStatus.COMING_SOON],
             public_id=lesson_id
             )
     except Exception as e:

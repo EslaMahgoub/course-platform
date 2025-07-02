@@ -165,6 +165,9 @@ class Lesson(models.Model):
             self.public_id = generate_public_id(self)
         super().save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        return self.path
+
     @property
     def path(self):
         course_path = self.course.path
@@ -174,3 +177,7 @@ class Lesson(models.Model):
 
     def get_display_name(self):
         return f"{self.title} - {self.course.get_display_name()}"
+
+    @property
+    def is_coming_soon(self):
+        return self.status == PublishStatus.COMING_SOON
