@@ -15,8 +15,8 @@ from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-LOCAL_CDN = BASE_DIR.parent / "local-cdn"
-TEMPLATE_DIR = BASE_DIR / "templates"
+LOCAL_CDN = BASE_DIR.parent / 'local-cdn'
+TEMPLATE_DIR = BASE_DIR / 'templates'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'courses',
+    'email',
 ]
 
 MIDDLEWARE = [
@@ -122,7 +123,7 @@ STATIC_URL = 'static/'
 
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = LOCAL_CDN / "media"
+MEDIA_ROOT = LOCAL_CDN / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -131,14 +132,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # cloudinary video settings
 
-CLOUDINARY_CLOUD_NAME = config("CLOUDINARY_CLOUD_NAME", default="")
-CLOUDINARY_PUBLIC_API_KEY = config("CLOUDINARY_PUBLIC_API_KEY", default="")
-CLOUDINARY_SECRET_API_KEY = config("CLOUDINARY_SECRET_API_KEY")
+CLOUDINARY_CLOUD_NAME = config('CLOUDINARY_CLOUD_NAME', default='')
+CLOUDINARY_PUBLIC_API_KEY = config('CLOUDINARY_PUBLIC_API_KEY', default='')
+CLOUDINARY_SECRET_API_KEY = config('CLOUDINARY_SECRET_API_KEY')
 
 
 
-ADMIN_USER_NAME=config("ADMIN_USER_NAME", default="Admin user")
-ADMIN_USER_EMAIL=config("ADMIN_USER_EMAIL", default=None)
+ADMIN_USER_NAME=config('ADMIN_USER_NAME', default='Admin user')
+ADMIN_USER_EMAIL=config('ADMIN_USER_EMAIL', default=None)
 
 MANAGERS=[]
 ADMINS=[]
@@ -150,8 +151,8 @@ if all([ADMIN_USER_NAME, ADMIN_USER_EMAIL]):
 
 # default backend
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = config("EMAIL_HOST", cast=str, default=None)
-EMAIL_PORT = config("EMAIL_PORT", cast=str, default='587') # Recommended
-EMAIL_HOST_USER = config("EMAIL_HOST_USER", cast=str, default=None)
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", cast=str, default=None)
-EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool, default=True)  # Use EMAIL_PORT 587 for TLS
+EMAIL_HOST = config('EMAIL_HOST', cast=str, default=None)
+EMAIL_PORT = config('EMAIL_PORT', cast=str, default='587') # Recommended
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', cast=str, default=None)
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', cast=str, default=None)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool, default=True)  # Use EMAIL_PORT 587 for TLS
