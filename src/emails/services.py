@@ -50,18 +50,17 @@ def send_verification_email(verify_obj_id):
 def verify_token(token, max_attempts=5):
     qs = EmailVerificationEvent.objects.filter(token=token)
     if not qs.exists() and not qs.count() == 1:
-        return False, "Invalid token"
+        return False, "Invalid token", None
     """ Has token """
     is_email_expired = qs.filter(expired=True)
     if is_email_expired.exists():
         """ token expired """
-        return False, "Token expired, try again"
+        return False, "Token expired, try again", None
     """ Has token, not expired """
     max_attempts_reached = qs.filter(attempts__gte=max_attempts)
     if max_attempts_reached.exists():
-        """ update max attempts +1 """
-        # max_attempts_reached.update()
-        return False, 'Token expired, used too many times'
+        """ max attempts reached, token expired"""
+        return False, 'Token expired, used too many times', None
     """ Token Valid """
     """ update attempts , expire token if attempts > max """
     # TODO: Offline this part to celery - background task
@@ -73,4 +72,5 @@ def verify_token(token, max_attempts=5):
         obj.expired = True
         obj.expired_at = timezone.now()
     obj.save()
-    return True, 'Welcome'
+    email_obj = obj.parent # Email.objects.get()
+    return True, 'Welcome', email_obj
