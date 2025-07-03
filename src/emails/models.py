@@ -28,4 +28,5 @@ class EmailVerificationEvent(models.Model):
         blank=True,
         null=True
     )
+    # did_send = models.BooleanField(default=False) # implement when using celery
     timestamp = models.DateTimeField(auto_now_add=True)
