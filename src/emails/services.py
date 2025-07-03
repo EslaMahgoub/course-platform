@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core.mail import send_mail
+from django.utils import timezone
 from .models import Email, EmailVerificationEvent
 
 
@@ -12,9 +13,11 @@ def verify_email(email):
 def get_verification_email_msg(verification_instance, as_html=False):
     if not isinstance(verification_instance, EmailVerificationEvent):
         return None
+    verify_link = verification_instance.get_link()
+    #TODO: refactor into an html template
     if as_html:
-        return f"<h1>{verification_instance.id}</h1>"
-    return f"{verification_instance.id}"
+        return f"<h1>Verify your email with the following:</h1><p><a href='{verify_link}'>{verify_link}</a></p>"
+    return f'Verify your email with the following:\n {verify_link}'
 
 def start_verification_event(email):
     email_obj, created = Email.objects.get_or_create(email=email)
@@ -29,7 +32,7 @@ def start_verification_event(email):
 def send_verification_email(verify_obj_id):
     verify_obj = EmailVerificationEvent.objects.get(id=verify_obj_id)
     email = verify_obj.email
-    subject = "Verify your email"
+    subject = 'Verify your email'
     text_msg = get_verification_email_msg(verify_obj, as_html=False)
     text_html = get_verification_email_msg(verify_obj, as_html=True)
     from_user_email_addr = EMAIL_HOST_USER
@@ -43,3 +46,31 @@ def send_verification_email(verify_obj_id):
         fail_silently=False,
         html_message=text_html
     )
+
+def verify_token(token, max_attempts=5):
+    qs = EmailVerificationEvent.objects.filter(token=token)
+    if not qs.exists() and not qs.count() == 1:
+        return False, "Invalid token"
+    """ Has token """
+    is_email_expired = qs.filter(expired=True)
+    if is_email_expired.exists():
+        """ token expired """
+        return False, "Token expired, try again"
+    """ Has token, not expired """
+    max_attempts_reached = qs.filter(attempts__gte=max_attempts)
+    if max_attempts_reached.exists():
+        """ update max attempts +1 """
+        # max_attempts_reached.update()
+        return False, 'Token expired, used too many times'
+    """ Token Valid """
+    """ update attempts , expire token if attempts > max """
+    # TODO: Offline this part to celery - background task
+    obj = qs.first()
+    obj.attempts += 1
+    obj.last_attempt_at = timezone.now()
+    if obj.attempts > max_attempts:
+        """ invalidation process """
+        obj.expired = True
+        obj.expired_at = timezone.now()
+    obj.save()
+    return True, 'Welcome'

@@ -1,5 +1,6 @@
+import uuid
+from django.conf import settings
 from django.db import models
-
 # Create your models here.
 
 
@@ -12,7 +13,7 @@ class Email(models.Model):
 class EmailVerificationEvent(models.Model):
     parent = models.ForeignKey(Email, on_delete=models.SET_NULL, null=True)
     email = models.EmailField()
-    # token
+    token = models.UUIDField(default=uuid.uuid1)
     # ip_address
     attempts = models.IntegerField(default=0)
     last_attempt_at = models.DateTimeField(
@@ -30,3 +31,6 @@ class EmailVerificationEvent(models.Model):
     )
     # did_send = models.BooleanField(default=False) # implement when using celery
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    def get_link(self):
+        return f"{settings.BASE_URL}/verify/{self.token}"
