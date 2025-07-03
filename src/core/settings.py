@@ -42,11 +42,16 @@ INSTALLED_APPS = [
 
     # Third party
     'django_htmx',
+    'tailwind',
+    'theme', # django tailwind theme app
 
     # Internal
     'courses',
     'emails',
 ]
+
+TAILWIND_APP_NAME = 'theme'
+NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -58,6 +63,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_htmx.middleware.HtmxMiddleware',
 ]
+
+if DEBUG:
+    # django tailwind theme app
+    INSTALLED_APPS.append('django_browser_reload')
+    MIDDLEWARE.append('django_browser_reload.middleware.BrowserReloadMiddleware')
 
 ROOT_URLCONF = 'core.urls'
 
