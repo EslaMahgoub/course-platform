@@ -1,10 +1,8 @@
 import helpers
-from django.http import Http404, JsonResponse
-from django.shortcuts import render
+from django.http import Http404
+from django.shortcuts import render, redirect
 
 from . import services
-
-# Create your views here.
 
 def course_list_view(request):
     queryset = services.get_publish_courses()
@@ -25,6 +23,11 @@ def lesson_detail_view(request, course_id=None, lesson_id=None, *args, **kwargs)
     lesson_obj = services.get_lesson_detail(lesson_id=lesson_id, course_id=course_id)
     if lesson_obj is None:
         raise Http404
+    email_id_exists = request.session.get('email_id')
+    print(request.path)
+    if lesson_obj.requires_email and not email_id_exists:
+        request.session['next_url'] = request.path
+        return render(request, "courses/email-required.html", {})
     # template_name = "courses/purchase-required.html"
     template_name = "courses/lesson-coming-soon.html"
     context = {
@@ -43,5 +46,4 @@ def lesson_detail_view(request, course_id=None, lesson_id=None, *args, **kwargs)
             width=1250
             )
         context['video_embed'] = video_embed_html
-    # return JsonResponse(context)
     return render(request, template_name, context)
