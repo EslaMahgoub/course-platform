@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
 from django.conf import settings
+from django_htmx.http import HttpResponseClientRedirect
 
 from . import services
 from .forms import EmailForm
@@ -11,17 +12,20 @@ EMAIL_ADDRESS = settings.EMAIL_ADDRESS
 def email_token_login_view(request):
     if not request.htmx:
         return redirect('/')
+    email_id_in_session = request.session.get('email_id')
     template_name = "emails/hx/form.html"
     form = EmailForm(request.POST or None)
     context = {
         'form': form,
-        'message': ''
+        'message': '',
+        'show_form': not email_id_in_session,
         }
     if form.is_valid():
         email_val = form.cleaned_data.get('email')
         obj = services.start_verification_event(email_val)
         context['form'] = EmailForm()
         context['message'] = f'Success! Check your email for verification from {EMAIL_ADDRESS}'
+        return HttpResponseClientRedirect('/check-your-email')
     else:
         print(form.errors)
     return render(request, template_name, context)
