@@ -7,7 +7,7 @@
         {% include "base/js.html" %}
         <title>{% block head_title %} {% endblock head_title %}</title>
     </head>
-    <body>
+    <body hx-headers='{"x-csrftoken": "{{ csrf_token }}"}'>
         {% include 'shared/navbar.html' %}
         {% block content %} {% endblock content %}
     </body>
