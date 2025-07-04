@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-
-<h1 class="text-3xl">{{object.title}}</h1>
-
-{% include "courses/snippets/list-display.html" with queryset=lessons_queryset %}
-
-
+<section class="bg-white dark:bg-gray-900">
+  <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
+    {% include "courses/snippets/header-section.html" with title=object.title %}
+    {% include "courses/snippets/list-display.html" with queryset=lessons_queryset %}
+  </div>
+</section>
 
 {% endblock content %}
