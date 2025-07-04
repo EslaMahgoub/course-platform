@@ -7,6 +7,10 @@ from emails import services as email_services
 
 EMAIL_ADDRESS = settings.EMAIL_ADDRESS
 
+
+def login_logout_template_view(request):
+    return render(request, "auth\login-logout.html", {})
+
 def home_view(request, *args, **kwargs):
     print(request.POST.get('email'))
     form = EmailForm(request.POST or None)
