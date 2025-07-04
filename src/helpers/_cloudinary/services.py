@@ -3,8 +3,10 @@ from django.template.loader import get_template
 
 def get_cloudinary_image_object(instance,
                                 field_name="image",
+                                format=None,
                                 as_html=False,
-                                width=1200):
+                                width=1200,
+                                height=None):
 
     if not hasattr(instance, field_name):
         return ""
@@ -12,8 +14,11 @@ def get_cloudinary_image_object(instance,
     if not image_object:
         return ""
     image_options = {
-        "width": width
+        "width": width,
+        "height": height
     }
+    if format is not None:
+        image_options['format'] = format
     if as_html:
         return image_object.image(**image_options)
     url = image_object.build_url(**image_options)

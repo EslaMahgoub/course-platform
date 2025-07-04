@@ -117,7 +117,8 @@ class Course(models.Model):
             self,
             field_name="image",
             as_html=False,
-            width=450
+            width=450,
+            height=250,
             )
 
     def get_display_image(self):
@@ -199,14 +200,25 @@ class Lesson(models.Model):
         return f"{self.title} - {self.course.get_display_name()}"
 
     def get_thumbnail(self):
-        if not self.thumbnail:
+        if self.thumbnail:
+            return helpers.get_cloudinary_image_object(
+                self,
+                field_name='thumbnail',
+                as_html=False,
+                width=450,
+                height=250,
+                )
+        elif self.video:
+            return helpers.get_cloudinary_image_object(
+                self,
+                field_name='video',
+                format='jpg',
+                as_html=False,
+                width=450,
+                height=250,
+                )
+        else:
             return None
-        return helpers.get_cloudinary_image_object(
-            self,
-            field_name="thumbnail",
-            as_html=False,
-            width=450
-            )
 
     @property
     def is_coming_soon(self):
