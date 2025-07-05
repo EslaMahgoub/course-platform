@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 {% block head_title %} CourseNgo {% endblock head_title %}
 {% block content %}
-    <div hx-get='/hx/login/' hx-trigger='load'></div>
+
+{% include "base/index.html" %}
+
+<hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+{% include "courses/snippets/header-section.html" with title="Courses" subtitle="We have awesome courses, Learn at your own pace!" %}
+<div hx-get="/courses" hx-trigger="revealed"></div>
+
 {% endblock %}
